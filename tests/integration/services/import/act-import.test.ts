@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { afterAll, beforeAll, beforeEach, describe, it } from 'vitest';
 
-import { importAct } from '../../../src/services/act-import.ts';
-import { findSectionsWithoutEmbedding } from '../../../src/repositories/law-section-repository.ts';
-import type { Act } from '../../../src/types/law.ts';
-import { clearDatabase, startDatabase, stopDatabase } from '../../helpers/database.ts';
-import type { TestDatabase } from '../../helpers/database.ts';
+import { importAct } from '../../../../src/services/import/act-import.ts';
+import { findSectionsWithoutEmbedding } from '../../../../src/repositories/law-section-repository.ts';
+import type { Act } from '../../../../src/types/law.ts';
+import { clearDatabase, startDatabase, stopDatabase } from '../../../helpers/database.ts';
+import type { TestDatabase } from '../../../helpers/database.ts';
 
 const ACT: Act = { code: 'TLS', name: 'Employment Contracts Act', sourceUrl: '', pageUrl: '' };
 

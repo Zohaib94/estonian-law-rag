@@ -1,6 +1,6 @@
-import { ACTS } from '../constants/acts.ts';
-import { ANSWER_INSTRUCTIONS } from '../constants/rag.ts';
-import type { RetrievedSection } from '../types/retrieval.ts';
+import { ACTS } from '../../constants/acts.ts';
+import { ANSWER_INSTRUCTIONS } from '../../constants/rag.ts';
+import type { RetrievedSection } from '../../types/retrieval.ts';
 import { sectionRef } from './section-ref.ts';
 
 // The augment step: the retrieved sections, each labelled with its act code and number, become the only context

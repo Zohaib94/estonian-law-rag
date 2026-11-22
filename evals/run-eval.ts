@@ -7,9 +7,9 @@ import { GEMINI_GAP_MS, PASS_BARS, RECALL_K, RETRIEVAL_MODES } from '../src/cons
 import { SECTIONS_RETRIEVED } from '../src/constants/retrieval.ts';
 import { initOrm } from '../src/db/orm.ts';
 import { createAnswerQuestion } from '../src/services/ask-service.ts';
-import { rankSections } from '../src/services/ranking.ts';
-import { sectionRef } from '../src/services/section-ref.ts';
-import { findSearchRows } from '../src/services/retriever.ts';
+import { rankSections } from '../src/services/retrieval/ranking.ts';
+import { sectionRef } from '../src/services/augmentation/section-ref.ts';
+import { findSearchRows } from '../src/services/retrieval/retriever.ts';
 import type { AnswerResult, GoldenQuestion, RetrievalResult } from '../src/types/eval.ts';
 import type { RetrievalMode, SearchRow } from '../src/types/retrieval.ts';
 import { citationAccuracy, meanReciprocalRank, missingAnswerRate, recallAtK, refusalAccuracy } from './metrics.ts';

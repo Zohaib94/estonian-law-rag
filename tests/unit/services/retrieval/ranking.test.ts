@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'vitest';
 
-import { rankSections } from '../../../src/services/ranking.ts';
-import type { SearchRow } from '../../../src/types/retrieval.ts';
+import { rankSections } from '../../../../src/services/retrieval/ranking.ts';
+import type { SearchRow } from '../../../../src/types/retrieval.ts';
 
 function row(sectionNr: string, keywordRank: number | null, vectorRank: number | null): SearchRow {
   return { actCode: 'TLS', sectionNr, title: '', text: '', keywordRank, vectorRank };

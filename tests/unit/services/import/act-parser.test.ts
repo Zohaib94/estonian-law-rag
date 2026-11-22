@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'vitest';
 
-import { parseAct } from '../../../src/services/act-parser.ts';
+import { parseAct } from '../../../../src/services/import/act-parser.ts';
 
 // Excerpts of the real pages served by Riigi Teataja (public-api/api/v1/en/akt/<id>/blob-html), cut down to a
 // few sections each. Keep them real: the parser was first written from a description of the format and was wrong.
 function fixture(name: string): string {
-  return readFileSync(new URL(`../../fixtures/${name}`, import.meta.url), 'utf8');
+  return readFileSync(new URL(`../../../fixtures/${name}`, import.meta.url), 'utf8');
 }
 
 describe('parseAct on the Employment Contracts Act', () => {

@@ -2,9 +2,9 @@ import type { MikroORM } from '@mikro-orm/postgresql';
 
 import type { Ask } from '../types/api.ts';
 import type { AnswerQuestion } from '../types/rag.ts';
-import { createAnswerer } from './answer-generator.ts';
-import { createGeminiClient } from './gemini-client.ts';
-import { retrieveSections } from './retriever.ts';
+import { createAnswerer } from './generation/answer-generator.ts';
+import { createGeminiClient } from './client/gemini-client.ts';
+import { retrieveSections } from './retrieval/retriever.ts';
 
 // The whole pipeline for one question: retrieve sections, then (optionally) generate an answer from them.
 export function createAsk(orm: MikroORM, answerQuestion?: AnswerQuestion): Ask {

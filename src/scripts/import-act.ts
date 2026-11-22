@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { ACTS } from '../constants/acts.ts';
 import { migrate } from '../db/migrate.ts';
 import { initOrm } from '../db/orm.ts';
-import { importAct } from '../services/act-import.ts';
+import { importAct } from '../services/import/act-import.ts';
 import type { Act } from '../types/law.ts';
 
 // Usage: import-act.ts [act code | all] [saved copy of the page]

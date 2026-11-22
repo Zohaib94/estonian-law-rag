@@ -1,7 +1,7 @@
 import type { EntityManager } from '@mikro-orm/postgresql';
 
-import { replaceSections } from '../repositories/law-section-repository.ts';
-import type { Act } from '../types/law.ts';
+import { replaceSections } from '../../repositories/law-section-repository.ts';
+import type { Act } from '../../types/law.ts';
 import { parseAct } from './act-parser.ts';
 
 // Replaces the act's stored sections with the ones parsed from its HTML. Returns how many were stored.

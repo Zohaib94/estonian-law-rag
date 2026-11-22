@@ -1,5 +1,5 @@
-import { GEMINI_TIMEOUT_MS, GEMINI_URL } from '../constants/rag.ts';
-import type { GenerateJson } from '../types/rag.ts';
+import { GEMINI_TIMEOUT_MS, GEMINI_URL } from '../../constants/rag.ts';
+import type { GenerateJson } from '../../types/rag.ts';
 
 interface GeminiResponse {
   candidates: { content: { parts: { text: string }[] } }[];

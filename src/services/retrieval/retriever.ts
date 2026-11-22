@@ -1,8 +1,8 @@
 import type { EntityManager } from '@mikro-orm/postgresql';
 
-import { SECTIONS_RETRIEVED } from '../constants/retrieval.ts';
-import { searchSections } from '../repositories/law-section-repository.ts';
-import type { RetrievedSection, SearchRow } from '../types/retrieval.ts';
+import { SECTIONS_RETRIEVED } from '../../constants/retrieval.ts';
+import { searchSections } from '../../repositories/law-section-repository.ts';
+import type { RetrievedSection, SearchRow } from '../../types/retrieval.ts';
 import { embedQuery } from './embedding.ts';
 import { rankSections } from './ranking.ts';
 

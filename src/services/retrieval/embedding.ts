@@ -1,8 +1,8 @@
 import { env, pipeline } from '@huggingface/transformers';
 import type { FeatureExtractionPipeline } from '@huggingface/transformers';
 
-import { EMBEDDING_MODEL, PASSAGE_PREFIX, QUERY_PREFIX } from '../constants/embedding.ts';
-import { MODEL_CACHE_DIR } from '../constants/env.ts';
+import { EMBEDDING_MODEL, PASSAGE_PREFIX, QUERY_PREFIX } from '../../constants/embedding.ts';
+import { MODEL_CACHE_DIR } from '../../constants/env.ts';
 
 // The library's overloaded pipeline() type is too complex for tsc; pin the one overload we use.
 const createExtractor = pipeline as (task: 'feature-extraction', model: string) => Promise<FeatureExtractionPipeline>;

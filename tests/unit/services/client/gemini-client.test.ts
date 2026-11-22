@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { afterEach, describe, it, vi } from 'vitest';
 
-import { createGeminiClient } from '../../../src/services/gemini-client.ts';
+import { createGeminiClient } from '../../../../src/services/client/gemini-client.ts';
 
 afterEach(() => vi.unstubAllGlobals());
 

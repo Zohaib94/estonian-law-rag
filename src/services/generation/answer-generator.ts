@@ -1,8 +1,8 @@
-import { ANSWER_SCHEMA, NOTHING_RETRIEVED } from '../constants/rag.ts';
-import type { Answer, AnswerQuestion, GenerateJson } from '../types/rag.ts';
-import type { RetrievedSection } from '../types/retrieval.ts';
-import { buildAnswerPrompt } from './answer-prompt.ts';
-import { normalizeCitation, sectionRef } from './section-ref.ts';
+import { ANSWER_SCHEMA, NOTHING_RETRIEVED } from '../../constants/rag.ts';
+import type { Answer, AnswerQuestion, GenerateJson } from '../../types/rag.ts';
+import type { RetrievedSection } from '../../types/retrieval.ts';
+import { buildAnswerPrompt } from '../augmentation/answer-prompt.ts';
+import { normalizeCitation, sectionRef } from '../augmentation/section-ref.ts';
 
 interface Reply {
   answerable: boolean;

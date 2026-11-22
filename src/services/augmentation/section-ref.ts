@@ -1,4 +1,4 @@
-import type { SectionText } from '../types/repository.ts';
+import type { SectionText } from '../../types/repository.ts';
 
 // Section numbers repeat across acts (§ 1 exists in every act), so a section is always named with its act code:
 // "TLS § 97", "PS § 12". The same text is used in prompt labels, citations and the golden questions.

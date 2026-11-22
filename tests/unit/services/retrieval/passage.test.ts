@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'vitest';
 
-import { toPassage } from '../../../src/services/passage.ts';
+import { toPassage } from '../../../../src/services/retrieval/passage.ts';
 
 describe('toPassage', () => {
   it('starts with the act name, section number and title', () => {

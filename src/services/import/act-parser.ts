@@ -15,8 +15,8 @@ import {
   STRUCTURE_BLOCK,
   SUPERSCRIPT_DIGITS,
   SUPERSCRIPT_TAG,
-} from '../constants/patterns.ts';
-import type { LawSection } from '../types/law.ts';
+} from '../../constants/patterns.ts';
+import type { LawSection } from '../../types/law.ts';
 
 // Splits an act's HTML into one record per §. Text before § 1 (title, amendment table, preamble) is dropped, and
 // sections that are repealed or omitted from the translation are skipped (their heading is either "[Repealed

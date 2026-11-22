@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { describe, it, vi } from 'vitest';
 
-import { NOTHING_RETRIEVED } from '../../../src/constants/rag.ts';
-import { createAnswerer } from '../../../src/services/answer-generator.ts';
-import type { GenerateJson } from '../../../src/types/rag.ts';
-import type { RetrievedSection } from '../../../src/types/retrieval.ts';
+import { NOTHING_RETRIEVED } from '../../../../src/constants/rag.ts';
+import { createAnswerer } from '../../../../src/services/generation/answer-generator.ts';
+import type { GenerateJson } from '../../../../src/types/rag.ts';
+import type { RetrievedSection } from '../../../../src/types/retrieval.ts';
 
 function section(actCode: string, sectionNr: string, title: string, text: string): RetrievedSection {
   return { actCode, sectionNr, title, text, keywordRank: 1, vectorRank: 1, score: 1 };

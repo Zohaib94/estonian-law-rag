@@ -1,6 +1,6 @@
 import { COPY } from '../constants/copy.ts';
 import { ACTS } from '../../../src/constants/acts.ts';
-import { sectionRef } from '../../../src/services/section-ref.ts';
+import { sectionRef } from '../../../src/services/augmentation/section-ref.ts';
 import { anchorId } from '../services/anchor-id.ts';
 import type { SectionListProps } from '../types/components.ts';
 

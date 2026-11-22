@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'vitest';
 
-import { normalizeCitation, sectionRef } from '../../../src/services/section-ref.ts';
+import { normalizeCitation, sectionRef } from '../../../../src/services/augmentation/section-ref.ts';
 
 describe('sectionRef', () => {
   it('names a section with its act code', () => {
