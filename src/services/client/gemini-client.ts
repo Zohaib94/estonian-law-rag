@@ -5,7 +5,6 @@ interface GeminiResponse {
   candidates: { content: { parts: { text: string }[] } }[];
 }
 
-// One job: POST a prompt and a JSON schema to Gemini and return the parsed JSON. No domain knowledge.
 export function createGeminiClient(apiKey: string, model: string): GenerateJson {
   return async (prompt, schema) => {
     const response = await fetch(`${GEMINI_URL}/${model}:generateContent`, {

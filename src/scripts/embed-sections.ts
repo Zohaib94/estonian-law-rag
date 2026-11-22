@@ -4,7 +4,6 @@ import { findSectionsWithoutEmbedding, saveEmbedding } from '../repositories/law
 import { embedPassages } from '../services/retrieval/embedding.ts';
 import { toPassage } from '../services/retrieval/passage.ts';
 
-// Embeds every section that has no embedding yet. An import clears them, so run this after every import.
 const orm = await initOrm();
 const em = orm.em.fork();
 

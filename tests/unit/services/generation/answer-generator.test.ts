@@ -10,7 +10,6 @@ function section(actCode: string, sectionNr: string, title: string, text: string
   return { actCode, sectionNr, title, text, keywordRank: 1, vectorRank: 1, score: 1 };
 }
 
-// § 1 exists in both acts; the Constitution has no section titles.
 const SECTIONS = [
   section('TLS', '97', 'Terms for advance notice of cancellation by employer', '(1) The employer gives 15 to 90 days notice.'),
   section('TLS', '10¹', 'Probationary period', '(1) The probationary period is up to four months.'),

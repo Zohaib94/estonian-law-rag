@@ -13,7 +13,6 @@ const SECTIONS: LawSection[] = [
   { actCode: 'TLS', sectionNr: '1', position: 2, title: 'Definition', text: 'An employment contract.' },
 ];
 
-// One-hot vectors: a query vector equal to a section's vector is that section's nearest neighbour.
 function oneHot(index: number): number[] {
   return Array.from({ length: EMBEDDING_DIMENSIONS }, (_, position) => (position === index ? 1 : 0));
 }

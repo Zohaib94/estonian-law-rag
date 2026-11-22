@@ -10,7 +10,6 @@ export interface TestDatabase {
   container: StartedPostgreSqlContainer;
 }
 
-// Same image as docker-compose, so pgvector is available.
 const IMAGE = 'pgvector/pgvector:pg16';
 
 export async function startDatabase(): Promise<TestDatabase> {

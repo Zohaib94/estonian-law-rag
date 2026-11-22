@@ -6,7 +6,6 @@ export const LOG_LEVEL = process.env.LOG_LEVEL ?? 'info';
 
 export const MODEL_CACHE_DIR = process.env.MODEL_CACHE_DIR;
 
-// Optional: without a key the app returns the retrieved sections but no written answer.
 export const GEMINI_API_KEY = process.env.GEMINI_API_KEY || undefined;
 
 export const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest';

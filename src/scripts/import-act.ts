@@ -6,8 +6,6 @@ import { initOrm } from '../db/orm.ts';
 import { importAct } from '../services/import/act-import.ts';
 import type { Act } from '../types/law.ts';
 
-// Usage: import-act.ts [act code | all] [saved copy of the page]
-// No arguments imports every act. The saved copy is for importing one act without network access.
 const [codeArg = 'all', savedCopy] = process.argv.slice(2);
 const acts = pickActs(codeArg);
 

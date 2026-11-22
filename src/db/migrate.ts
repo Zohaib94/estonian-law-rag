@@ -4,8 +4,6 @@ import type { Knex } from 'knex';
 import { DATABASE_URL } from '../constants/env.ts';
 import * as initialSchema from './migrations/20261122000000_initial_schema.ts';
 
-// Listed explicitly (not read from disk) so migrations load the same under Node, Vitest and Docker.
-// Add new migration modules to this list, newest last.
 const MIGRATIONS: Record<string, Knex.Migration> = {
   '20261122000000_initial_schema': initialSchema,
 };

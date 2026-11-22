@@ -2,7 +2,6 @@ import { EntitySchema } from '@mikro-orm/core';
 
 import type { LawSection } from '../types/law.ts';
 
-// tsv and embedding columns are read and written with raw SQL in the law section repository.
 export const LawSectionEntity = new EntitySchema<LawSection>({
   name: 'LawSection',
   tableName: 'law_section',

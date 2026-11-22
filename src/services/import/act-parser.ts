@@ -18,13 +18,9 @@ import {
 } from '../../constants/patterns.ts';
 import type { LawSection } from '../../types/law.ts';
 
-// Splits an act's HTML into one record per §. Text before § 1 (title, amendment table, preamble) is dropped, and
-// sections that are repealed or omitted from the translation are skipped (their heading is either "[Repealed
-// – RT ...]" or followed by a "[Repealed ...]" line). A section without a title, as in the
-// Constitution, gets an empty one.
 export function parseAct(html: string, actCode: string): LawSection[] {
   const sections: LawSection[] = [];
-  // null outside a section worth keeping: before § 1, or inside a repealed or omitted §.
+
   let current: LawSection | null = null;
 
   for (const line of toLines(html)) {
@@ -37,7 +33,6 @@ export function parseAct(html: string, actCode: string): LawSection[] {
         sections.push(current);
       }
     } else if (current && REMOVED_NOTE.test(line)) {
-      // Also ends the section before a "§ 140. – § 189. [Omitted from this text.]" range.
       if (current.text === '') {
         sections.pop();
       }

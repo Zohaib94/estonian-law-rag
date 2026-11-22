@@ -1,9 +1,6 @@
 import { RRF_K } from '../../constants/retrieval.ts';
 import type { RetrievalMode, RetrievedSection, SearchRow } from '../../types/retrieval.ts';
 
-// Reciprocal rank fusion: a section earns 1 / (RRF_K + rank) from each list it appears in. A section found by
-// both keyword and vector search outranks one found by only one of them, and only ranks are compared, so the two
-// searches' incompatible scores never need to be mixed. Keyword-only and vector-only modes exist for the evals.
 const SCORERS: Record<RetrievalMode, (row: SearchRow) => number> = {
   keyword: (row) => reciprocal(row.keywordRank),
   vector: (row) => reciprocal(row.vectorRank),

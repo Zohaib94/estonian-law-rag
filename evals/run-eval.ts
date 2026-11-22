@@ -23,11 +23,9 @@ const golden = await readGolden();
 const retrievalResults: RetrievalResult[] = [];
 const answerResults: AnswerResult[] = [];
 
-// One question at a time, so Gemini's rate limit holds and progress reads in order.
 for (const [index, entry] of golden.entries()) {
   const rows = await findSearchRows(orm.em.fork(), entry.question);
 
-  // Unanswerable questions have no right section, so they only count towards the answer metrics.
   if (entry.sections.length > 0) {
     retrievalResults.push({ actCode: actOf(entry), expected: entry.sections, ranked: rankEveryMode(rows) });
   }
@@ -44,7 +42,6 @@ for (const [index, entry] of golden.entries()) {
 console.log(`\nRetrieval, ${retrievalResults.length} answerable questions`);
 console.table(retrievalTable(retrievalResults));
 
-// Per act: a question belongs to the act of its first expected section, so a hit in the wrong act counts as a miss.
 for (const actCode of Object.keys(ACTS)) {
   const results = retrievalResults.filter((result) => result.actCode === actCode);
 
@@ -94,7 +91,6 @@ async function readGolden(): Promise<GoldenQuestion[]> {
     .map((line) => JSON.parse(line) as GoldenQuestion);
 }
 
-// All rows, ranked each way, so recall@k and MRR can look as deep as they need.
 function rankEveryMode(rows: SearchRow[]): Record<RetrievalMode, string[]> {
   const ranked = RETRIEVAL_MODES.map((mode) => [mode, rankSections(rows, mode, rows.length).map(sectionRef)]);
 
@@ -110,7 +106,6 @@ function retrievalTable(results: RetrievalResult[]) {
   );
 }
 
-// "TLS § 97" -> "TLS"
 function actOf(entry: GoldenQuestion): string {
   return entry.sections[0].split(' ')[0];
 }

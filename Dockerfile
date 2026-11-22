@@ -1,4 +1,3 @@
-# Build stage: install everything and build the frontend.
 FROM node:22-slim AS build
 
 WORKDIR /app
@@ -9,7 +8,6 @@ RUN npm install
 COPY . .
 RUN npm run web:build
 
-# Runtime stage: production dependencies, backend source, evals and the built frontend.
 FROM node:22-slim
 
 WORKDIR /app

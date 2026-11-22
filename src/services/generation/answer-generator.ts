@@ -10,10 +10,8 @@ interface Reply {
   citations: string[];
 }
 
-// The generate step: asks the model to answer from the retrieved sections, then checks its citations.
 export function createAnswerer(generate: GenerateJson): AnswerQuestion {
   return async (question, sections) => {
-    // Nothing retrieved means nothing to ground an answer in, so don't spend an API call.
     if (sections.length === 0) {
       return { answerable: false, text: NOTHING_RETRIEVED, citations: [] };
     }
@@ -28,8 +26,6 @@ export function createAnswerer(generate: GenerateJson): AnswerQuestion {
   };
 }
 
-// The model may only cite sections it was shown, so any other citation is dropped. An answer left without a
-// single valid citation is not grounded in the law, so it is rejected rather than shown.
 function readAnswer(reply: unknown, sections: RetrievedSection[]): Answer | null {
   if (!isReply(reply)) {
     return null;

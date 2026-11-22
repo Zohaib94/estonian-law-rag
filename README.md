@@ -77,7 +77,7 @@ translation appears.
    the act>?leiaKehtiv=true`, requested with `Accept: application/json`, returns the id of the version in force
    now as `kehtivId`.
 2. `npm run import:act -- <code>`, then `npm run embed`. Check the count and a few sections against the page: the
-   parser (`src/services/act-parser.ts`) was written for these two acts' markup, and another act may need more
+   parser (`src/services/import/act-parser.ts`) was written for these two acts' markup, and another act may need more
    (for example Roman-numeral chapters, untitled sections and unnumbered paragraphs already work).
 3. Add golden questions for the act to `evals/data/golden.jsonl` and run `npm run eval`.
 

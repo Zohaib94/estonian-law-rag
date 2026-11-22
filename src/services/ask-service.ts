@@ -6,7 +6,6 @@ import { createAnswerer } from './generation/answer-generator.ts';
 import { createGeminiClient } from './client/gemini-client.ts';
 import { retrieveSections } from './retrieval/retriever.ts';
 
-// The whole pipeline for one question: retrieve sections, then (optionally) generate an answer from them.
 export function createAsk(orm: MikroORM, answerQuestion?: AnswerQuestion): Ask {
   return async (question) => {
     const sections = await retrieveSections(orm.em.fork(), question);
@@ -16,7 +15,6 @@ export function createAsk(orm: MikroORM, answerQuestion?: AnswerQuestion): Ask {
   };
 }
 
-// Without a key the app still retrieves sections, but writes no answer.
 export function createAnswerQuestion(apiKey: string | undefined, model: string): AnswerQuestion | undefined {
   return apiKey ? createAnswerer(createGeminiClient(apiKey, model)) : undefined;
 }

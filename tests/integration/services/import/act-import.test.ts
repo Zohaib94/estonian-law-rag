@@ -9,7 +9,6 @@ import type { TestDatabase } from '../../../helpers/database.ts';
 
 const ACT: Act = { code: 'TLS', name: 'Employment Contracts Act', sourceUrl: '', pageUrl: '' };
 
-// Heading and text markup as in Riigi Teataja's pages.
 function sectionHtml(nr: string, title: string, text: string): string {
   return `<div data-type="paragrahv"><strong>§ ${nr}.  </strong><strong>${title}</strong></div><div data-type="loige">${text}</div>`;
 }

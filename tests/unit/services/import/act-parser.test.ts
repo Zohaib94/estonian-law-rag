@@ -4,8 +4,6 @@ import { describe, it } from 'vitest';
 
 import { parseAct } from '../../../../src/services/import/act-parser.ts';
 
-// Excerpts of the real pages served by Riigi Teataja (public-api/api/v1/en/akt/<id>/blob-html), cut down to a
-// few sections each. Keep them real: the parser was first written from a description of the format and was wrong.
 function fixture(name: string): string {
   return readFileSync(new URL(`../../../fixtures/${name}`, import.meta.url), 'utf8');
 }
@@ -42,7 +40,6 @@ describe('parseAct on the Employment Contracts Act', () => {
   });
 
   it('skips repealed sections, whether the note is in the title or after it', () => {
-    // § 43¹ ("[Repealed ...]" line after the title) and § 135 (the title itself) are in the excerpt.
     assert.equal(sections.find((section) => section.sectionNr === '43¹'), undefined);
     assert.equal(sections.find((section) => section.sectionNr === '135'), undefined);
   });

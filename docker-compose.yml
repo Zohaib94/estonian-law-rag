@@ -1,4 +1,3 @@
-# Ports differ from the nutrition-label app (5432, 3000), so both can run at once.
 services:
   db:
     image: pgvector/pgvector:pg16

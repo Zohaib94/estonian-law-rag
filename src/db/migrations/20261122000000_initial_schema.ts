@@ -2,8 +2,6 @@ import type { Knex } from 'knex';
 
 import { EMBEDDING_DIMENSIONS } from '../../constants/embedding.ts';
 
-// Raw SQL where knex's builder has no pgvector or generated tsvector support.
-// shortcut: no HNSW index; one act is ~200 rows, and a sequential vector scan takes well under a millisecond.
 export async function up(knex: Knex): Promise<void> {
   await knex.raw('create extension if not exists vector');
 

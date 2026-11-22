@@ -6,9 +6,6 @@ import type { LawSection } from '../types/law.ts';
 import type { SectionText } from '../types/repository.ts';
 import type { SearchRow } from '../types/retrieval.ts';
 
-// Runs keyword search and vector search in one query and returns every section either one found, with its rank
-// in each list. Fusing the two lists happens in code (services/ranking.ts), so the evals can compare
-// keyword-only, vector-only and hybrid rankings from the same rows.
 const SEARCH_SQL = `
   with query as (
     select ?::vector as question_embedding,
@@ -37,15 +34,12 @@ const SEARCH_SQL = `
   where keyword_hits.rank is not null or vector_hits.rank is not null
 `;
 
-// plainto_tsquery joins the question's words with AND, which a whole sentence almost never matches,
-// so the SQL swaps the ANDs for ORs and lets ts_rank favour sections that match more words.
 export async function searchSections(em: EntityManager, question: string, vector: number[]): Promise<SearchRow[]> {
   return em
     .getConnection()
     .execute(SEARCH_SQL, [toVectorLiteral(vector), question, CANDIDATES_PER_SEARCH, CANDIDATES_PER_SEARCH]);
 }
 
-// Deleting first means a re-import also removes sections the new version no longer has.
 export async function replaceSections(em: EntityManager, actCode: string, sections: LawSection[]): Promise<void> {
   await em.transactional(async (tx) => {
     await tx.nativeDelete(LawSectionEntity, { actCode });

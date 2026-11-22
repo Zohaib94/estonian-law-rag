@@ -35,13 +35,13 @@ flowchart LR
 | What | Where |
 |---|---|
 | Download the HTML (or read a saved file) | `scripts/import-act.ts` |
-| Split it into sections | `services/act-parser.ts` |
-| Store them, replacing the previous import | `services/act-import.ts`, `repositories/law-section-repository.ts` |
-| Embed each section | `scripts/embed-sections.ts`, `services/embedding.ts`, `services/passage.ts` |
+| Split it into sections | `services/import/act-parser.ts` |
+| Store them, replacing the previous import | `services/import/act-import.ts`, `repositories/law-section-repository.ts` |
+| Embed each section | `scripts/embed-sections.ts`, `services/retrieval/embedding.ts`, `services/retrieval/passage.ts` |
 
 - **More than one act.** Section numbers repeat across acts, so a section is identified by act code plus number,
   everywhere: the table's primary key is `(act_code, section_nr)`, prompt labels and citations read `TLS § 97` or
-  `PS § 12` (`services/section-ref.ts`), and the golden questions use the same form. `import-act.ts` takes an act
+  `PS § 12` (`services/augmentation/section-ref.ts`), and the golden questions use the same form. `import-act.ts` takes an act
   code or imports all acts; re-importing one act replaces only that act's rows. Questions are searched across all
   acts at once, so the right act is chosen by retrieval, not by the user.
 - **One chunk per §.** A section is the unit the law itself uses and the unit people cite, so it is the natural
@@ -74,8 +74,8 @@ flowchart LR
 
 | What | Where |
 |---|---|
-| Embed the question, run both searches in one SQL query | `services/retriever.ts`, `repositories/law-section-repository.ts` |
-| Merge the two ranked lists | `services/ranking.ts` |
+| Embed the question, run both searches in one SQL query | `services/retrieval/retriever.ts`, `repositories/law-section-repository.ts` |
+| Merge the two ranked lists | `services/retrieval/ranking.ts` |
 
 - **Two searches, because each misses what the other finds.** Keyword search (Postgres full text) is good at exact
   terms such as "probationary period" or "overtime". Vector search finds sections that mean the same thing in
@@ -91,7 +91,7 @@ flowchart LR
 
 ### 2. Augment: building the prompt
 
-`services/answer-prompt.ts` writes the instructions, a legend of the act codes, then each of the 5 sections as
+`services/augmentation/answer-prompt.ts` writes the instructions, a legend of the act codes, then each of the 5 sections as
 `[TLS § 97] Title` (`[PS § 12]` alone for an untitled one) followed by its text, then the question. The labels are
 what the model cites. The instructions (in `constants/rag.ts`) tell it to use only these sections, to keep the act
 code in citations, to answer in plain English, and to say so when the sections don't cover the question.
@@ -100,8 +100,8 @@ code in citations, to answer in plain English, and to say so when the sections d
 
 | What | Where |
 |---|---|
-| Call Gemini with a JSON schema | `services/gemini-client.ts` |
-| Check the reply and its citations | `services/answer-generator.ts` |
+| Call Gemini with a JSON schema | `services/client/gemini-client.ts` |
+| Check the reply and its citations | `services/generation/answer-generator.ts` |
 
 - **Structured output.** Gemini must return `{ answerable, answer, citations }` matching a JSON schema, so the app
   reads citations as data instead of parsing them out of prose.
@@ -137,6 +137,11 @@ sequenceDiagram
 
 ## Files
 
+Services are grouped by pipeline step: `services/import/` (parse and store an act), `services/retrieval/` (embed,
+search, fuse), `services/augmentation/` (prompt and section labels), `services/generation/` (answer and citation
+checks) and `services/client/` (the Gemini HTTP call). `ask-service.ts` ties the steps together, and the tests mirror
+this layout.
+
 | File | Responsibility |
 |---|---|
 | `server.ts` | Runs migrations, connects the ORM, wires the pipeline, serves the API and the built frontend. |
@@ -144,16 +149,16 @@ sequenceDiagram
 | `routes/ask-route.ts` | `POST /api/ask`: validates the question and returns the pipeline's result. |
 | `routes/web-route.ts` | Serves `web/dist` when it exists. |
 | `services/ask-service.ts` | The pipeline for one question (retrieve, then answer), and the Gemini wiring. |
-| `services/act-parser.ts` | Act HTML to one record per §. Pure. |
-| `services/section-ref.ts` | The `TLS § 97` form of a section, and reading a citation back into it. Pure. |
-| `services/act-import.ts` | Parses an act, checks the result, replaces its stored sections. |
-| `services/passage.ts` | The text embedded for a section: header plus body. Pure. |
-| `services/embedding.ts` | Local e5 embeddings for questions and passages, loaded once. |
-| `services/retriever.ts` | Embeds the question, runs the search, keeps the hybrid top 5. |
-| `services/ranking.ts` | Reciprocal rank fusion, and keyword-only and vector-only ranking for the evals. Pure. |
-| `services/answer-prompt.ts` | The augment step: instructions, numbered sections, question. Pure. |
-| `services/answer-generator.ts` | The generate step: calls the model and validates its citations. |
-| `services/gemini-client.ts` | POSTs a prompt and a JSON schema to Gemini and parses the JSON reply. No domain knowledge. |
+| `services/import/act-parser.ts` | Act HTML to one record per §. Pure. |
+| `services/augmentation/section-ref.ts` | The `TLS § 97` form of a section, and reading a citation back into it. Pure. |
+| `services/import/act-import.ts` | Parses an act, checks the result, replaces its stored sections. |
+| `services/retrieval/passage.ts` | The text embedded for a section: header plus body. Pure. |
+| `services/retrieval/embedding.ts` | Local e5 embeddings for questions and passages, loaded once. |
+| `services/retrieval/retriever.ts` | Embeds the question, runs the search, keeps the hybrid top 5. |
+| `services/retrieval/ranking.ts` | Reciprocal rank fusion, and keyword-only and vector-only ranking for the evals. Pure. |
+| `services/augmentation/answer-prompt.ts` | The augment step: instructions, numbered sections, question. Pure. |
+| `services/generation/answer-generator.ts` | The generate step: calls the model and validates its citations. |
+| `services/client/gemini-client.ts` | POSTs a prompt and a JSON schema to Gemini and parses the JSON reply. No domain knowledge. |
 | `repositories/law-section-repository.ts` | All database access: replace an act's sections, embeddings, the search SQL. |
 | `models/law-section.ts` | MikroORM `EntitySchema` for `law_section`. |
 | `db/` | ORM setup and Knex migrations (pgvector extension, generated tsvector column). |

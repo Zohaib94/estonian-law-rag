@@ -10,5 +10,4 @@ export const PASS_BARS = {
   refusalAccuracy: 0.8,
 };
 
-// Pause between Gemini calls so a full run stays inside the free tier's requests-per-minute limit.
 export const GEMINI_GAP_MS = 4_000;
