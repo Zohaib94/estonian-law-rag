@@ -6,5 +6,8 @@
   "categories": {
     "correctness": "error",
     "suspicious": "warn"
+  },
+  "rules": {
+    "oxc/no-async-endpoint-handlers": "off"
   }
 }

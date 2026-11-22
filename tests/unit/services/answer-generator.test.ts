@@ -19,6 +19,10 @@ function answering(reply: unknown) {
   return vi.fn<GenerateJson>(async () => reply);
 }
 
+const failing: GenerateJson = async () => {
+  throw new Error('timeout');
+};
+
 describe('createAnswerer', () => {
   it('sends the question and the numbered sections as the prompt', async () => {
     const generate = answering({ answerable: true, answer: 'Up to 90 days.', citations: ['97'] });
@@ -66,10 +70,6 @@ describe('createAnswerer', () => {
   });
 
   it('returns null for a malformed reply or a failed request', async () => {
-    const failing: GenerateJson = async () => {
-      throw new Error('timeout');
-    };
-
     assert.equal(await createAnswerer(answering({ answer: 'no flags' }))('q', SECTIONS), null);
     assert.equal(await createAnswerer(failing)('q', SECTIONS), null);
   });
