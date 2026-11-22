@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { EMPLOYMENT_CONTRACTS_ACT } from '../../src/constants/acts.ts';
+import { ACTS } from '../../src/constants/acts.ts';
 import type { AskResponse } from '../../src/types/api.ts';
 import { AnswerPanel } from './components/AnswerPanel.tsx';
 import { QuestionForm } from './components/QuestionForm.tsx';
@@ -48,7 +48,14 @@ export function App() {
       {result && <SectionList sections={result.sections} citations={result.answer?.citations ?? []} />}
 
       <footer className="page-footer">
-        {COPY.disclaimer} <a href={EMPLOYMENT_CONTRACTS_ACT.pageUrl}>{COPY.sourceLink}</a>.
+        {COPY.disclaimer}{' '}
+        {Object.values(ACTS).map((act, index) => (
+          <span key={act.code}>
+            {index > 0 && ', '}
+            <a href={act.pageUrl}>{act.name}</a>
+          </span>
+        ))}
+        .
       </footer>
     </main>
   );

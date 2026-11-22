@@ -1,4 +1,5 @@
 import { COPY } from '../constants/copy.ts';
+import { anchorId } from '../services/anchor-id.ts';
 import type { AnswerPanelProps } from '../types/components.ts';
 
 export function AnswerPanel({ answer }: AnswerPanelProps) {
@@ -15,9 +16,9 @@ export function AnswerPanel({ answer }: AnswerPanelProps) {
       {answer && answer.citations.length > 0 && (
         <p className="citations">
           {COPY.basedOn}{' '}
-          {answer.citations.map((sectionNr) => (
-            <a key={sectionNr} className="citation" href={`#section-${sectionNr}`}>
-              § {sectionNr}
+          {answer.citations.map((ref) => (
+            <a key={ref} className="citation" href={`#${anchorId(ref)}`}>
+              {ref}
             </a>
           ))}
         </p>

@@ -1,4 +1,7 @@
 import { COPY } from '../constants/copy.ts';
+import { ACTS } from '../../../src/constants/acts.ts';
+import { sectionRef } from '../../../src/services/section-ref.ts';
+import { anchorId } from '../services/anchor-id.ts';
 import type { SectionListProps } from '../types/components.ts';
 
 export function SectionList({ sections, citations }: SectionListProps) {
@@ -9,13 +12,14 @@ export function SectionList({ sections, citations }: SectionListProps) {
 
       <ol>
         {sections.map((section) => (
-          <li key={`${section.actCode}-${section.sectionNr}`} id={`section-${section.sectionNr}`}>
+          <li key={sectionRef(section)} id={anchorId(sectionRef(section))}>
             <h3>
-              § {section.sectionNr}. {section.title}
+              {sectionRef(section)}.{section.title && ` ${section.title}`}
             </h3>
 
             <div className="badges">
-              {citations.includes(section.sectionNr) && <span className="badge badge-cited">{COPY.cited}</span>}
+              <span className="badge">{ACTS[section.actCode]?.name ?? section.actCode}</span>
+              {citations.includes(sectionRef(section)) && <span className="badge badge-cited">{COPY.cited}</span>}
               {section.keywordRank !== null && <span className="badge">{COPY.keywordRank(section.keywordRank)}</span>}
               {section.vectorRank !== null && <span className="badge">{COPY.vectorRank(section.vectorRank)}</span>}
             </div>
