@@ -1,12 +1,14 @@
 import { readFile } from 'node:fs/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
 
+import { ACTS } from '../src/constants/acts.ts';
 import { GEMINI_API_KEY, GEMINI_MODEL } from '../src/constants/env.ts';
 import { GEMINI_GAP_MS, PASS_BARS, RECALL_K, RETRIEVAL_MODES } from '../src/constants/eval.ts';
 import { SECTIONS_RETRIEVED } from '../src/constants/retrieval.ts';
 import { initOrm } from '../src/db/orm.ts';
 import { createAnswerQuestion } from '../src/services/ask-service.ts';
 import { rankSections } from '../src/services/ranking.ts';
+import { sectionRef } from '../src/services/section-ref.ts';
 import { findSearchRows } from '../src/services/retriever.ts';
 import type { AnswerResult, GoldenQuestion, RetrievalResult } from '../src/types/eval.ts';
 import type { RetrievalMode, SearchRow } from '../src/types/retrieval.ts';
@@ -27,27 +29,28 @@ for (const [index, entry] of golden.entries()) {
 
   // Unanswerable questions have no right section, so they only count towards the answer metrics.
   if (entry.sections.length > 0) {
-    retrievalResults.push({ expected: entry.sections, ranked: rankEveryMode(rows) });
+    retrievalResults.push({ actCode: actOf(entry), expected: entry.sections, ranked: rankEveryMode(rows) });
   }
 
   if (answerQuestion) {
     const answer = await answerQuestion(entry.question, rankSections(rows, 'hybrid', SECTIONS_RETRIEVED));
 
-    answerResults.push({ expected: entry.sections, answer });
+    answerResults.push({ actCode: entry.sections.length > 0 ? actOf(entry) : null, expected: entry.sections, answer });
     console.log(`${index + 1}/${golden.length} answered`);
     await sleep(GEMINI_GAP_MS);
   }
 }
 
 console.log(`\nRetrieval, ${retrievalResults.length} answerable questions`);
-console.table(
-  Object.fromEntries(
-    RETRIEVAL_MODES.map((mode) => [
-      mode,
-      { [`recall@${RECALL_K}`]: recallAtK(retrievalResults, mode, RECALL_K), mrr: meanReciprocalRank(retrievalResults, mode) },
-    ]),
-  ),
-);
+console.table(retrievalTable(retrievalResults));
+
+// Per act: a question belongs to the act of its first expected section, so a hit in the wrong act counts as a miss.
+for (const actCode of Object.keys(ACTS)) {
+  const results = retrievalResults.filter((result) => result.actCode === actCode);
+
+  console.log(`\nRetrieval, ${actCode}, ${results.length} questions`);
+  console.table(retrievalTable(results));
+}
 
 const checks = [recallAtK(retrievalResults, 'hybrid', RECALL_K) >= PASS_BARS.hybridRecall];
 
@@ -60,6 +63,16 @@ if (answerQuestion) {
 
   console.log(`\nAnswers, ${answerResults.length} questions`);
   console.table(answers);
+
+  console.log('\nCitation accuracy per act');
+  console.table(
+    Object.fromEntries(
+      Object.keys(ACTS).map((actCode) => [
+        actCode,
+        { citationAccuracy: citationAccuracy(answerResults.filter((result) => result.actCode === actCode)) },
+      ]),
+    ),
+  );
   checks.push(answers['citation accuracy'] >= PASS_BARS.citationAccuracy, answers['refusal accuracy'] >= PASS_BARS.refusalAccuracy);
 } else {
   console.log('\nAnswers: skipped, set GEMINI_API_KEY to evaluate them.');
@@ -83,7 +96,21 @@ async function readGolden(): Promise<GoldenQuestion[]> {
 
 // All rows, ranked each way, so recall@k and MRR can look as deep as they need.
 function rankEveryMode(rows: SearchRow[]): Record<RetrievalMode, string[]> {
-  const ranked = RETRIEVAL_MODES.map((mode) => [mode, rankSections(rows, mode, rows.length).map((row) => row.sectionNr)]);
+  const ranked = RETRIEVAL_MODES.map((mode) => [mode, rankSections(rows, mode, rows.length).map(sectionRef)]);
 
   return Object.fromEntries(ranked) as Record<RetrievalMode, string[]>;
+}
+
+function retrievalTable(results: RetrievalResult[]) {
+  return Object.fromEntries(
+    RETRIEVAL_MODES.map((mode) => [
+      mode,
+      { [`recall@${RECALL_K}`]: recallAtK(results, mode, RECALL_K), mrr: meanReciprocalRank(results, mode) },
+    ]),
+  );
+}
+
+// "TLS § 97" -> "TLS"
+function actOf(entry: GoldenQuestion): string {
+  return entry.sections[0].split(' ')[0];
 }

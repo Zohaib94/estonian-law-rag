@@ -11,11 +11,11 @@ import {
 import type { AnswerResult, RetrievalResult } from '../../../src/types/eval.ts';
 
 function retrieval(expected: string[], hybrid: string[]): RetrievalResult {
-  return { expected, ranked: { keyword: [], vector: [], hybrid } };
+  return { actCode: 'TLS', expected, ranked: { keyword: [], vector: [], hybrid } };
 }
 
 function answered(expected: string[], citations: string[] | null, answerable = true): AnswerResult {
-  return { expected, answer: citations === null ? null : { answerable, text: '', citations } };
+  return { actCode: expected.length > 0 ? 'TLS' : null, expected, answer: citations === null ? null : { answerable, text: '', citations } };
 }
 
 describe('retrieval metrics', () => {
