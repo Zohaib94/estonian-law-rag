@@ -59,9 +59,12 @@ Change one thing at a time (the passage header, `CANDIDATES_PER_SEARCH`, `RRF_K`
 Keep a change only if the numbers improve. Before trusting a metric, read a few failing questions yourself:
 a wrong expected section in the golden file looks exactly like a retrieval miss.
 
-## Latest results (no Gemini key; answers not measured)
+## Latest results
 
-Run on the two acts as imported from Riigi Teataja, `TLS` in force from 01.10.2026:
+Run on the two acts as imported from Riigi Teataja (`TLS` in force from 01.10.2026), with a Gemini key and the
+default model (`GEMINI_MODEL`, `gemini-flash-latest`). All 55 questions were answered.
+
+### Retrieval
 
 | Questions | keyword recall@5 / MRR | vector | hybrid |
 |---|---|---|---|
@@ -72,6 +75,24 @@ Run on the two acts as imported from Riigi Teataja, `TLS` in force from 01.10.20
 The two hybrid misses: the Estonian question about annual holiday (`TLS § 55` ranked 9th), and "Who has the right to
 vote in Riigikogu elections?" (`PS § 57` is not in the top 20). Both labels are right; both are retrieval misses.
 Hybrid wins on recall but not on MRR: vector search ranks the right section higher when it finds it.
+
+### Answers
+
+| Metric | Result | Bar |
+|---|---|---|
+| citation accuracy, all 50 answerable | 0.96 | 0.8 |
+| citation accuracy, `TLS` (29) | 0.97 | |
+| citation accuracy, `PS` (21) | 0.95 | |
+| refusal accuracy (5 out-of-scope questions) | 1.00 | 0.8 |
+| no usable answer | 0 | |
+
+Every bar is met. Citation accuracy follows retrieval recall: the two misses above are the answers that could not cite
+the right section, because the model was never shown it. All 5 out-of-scope questions were refused, and no request
+failed or was rejected for citing nothing.
+
+Caveats: 50 answerable questions is a small set, so one question moves a metric by 2 points; the questions were written
+by the same person who wrote the code, so the numbers are an upper bound; and a correct citation does not prove the
+answer text is correct (see below).
 
 ## Not measured yet
 

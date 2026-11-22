@@ -106,7 +106,8 @@ Runs 55 hand-written questions through the pipeline (29 on the Employment Contra
 the rest answered by neither), and reports retrieval overall and for each act. It always measures retrieval (is the right section in the
 top 5?) for keyword, vector and hybrid search. With a Gemini key it also measures the answers: does the answer
 cite the right section, and does the model refuse questions the act doesn't cover? See
-[evals/README.md](evals/README.md).
+[evals/README.md](evals/README.md), which also has the latest results: hybrid recall@5 0.96, citation accuracy 0.96,
+refusal accuracy 1.00.
 
 ## Checks
 
