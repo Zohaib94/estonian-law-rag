@@ -103,7 +103,7 @@ To add one, create `src/db/migrations/<timestamp>_<name>.ts` exporting `up` and 
 
 ## Not in v1
 
-- Only one act, and only one version of it (in force from 15.06.2024). Newer versions and other acts (for example
+- Only one act, and only one version of it (in force 01.10.2026–31.12.2026). Newer versions and other acts (for example
   the Law of Obligations Act for tenancy) need their URLs added to `src/constants/acts.ts`.
 - The English translation only; the binding Estonian text isn't indexed.
 - Long sections are embedded whole, so text past the model's 512-token limit doesn't affect their embedding.
