@@ -2,6 +2,7 @@ import { ANSWER_SCHEMA, NOTHING_RETRIEVED } from '../constants/rag.ts';
 import type { Answer, AnswerQuestion, GenerateJson } from '../types/rag.ts';
 import type { RetrievedSection } from '../types/retrieval.ts';
 import { buildAnswerPrompt } from './answer-prompt.ts';
+import { normalizeCitation, sectionRef } from './section-ref.ts';
 
 interface Reply {
   answerable: boolean;
@@ -34,8 +35,10 @@ function readAnswer(reply: unknown, sections: RetrievedSection[]): Answer | null
     return null;
   }
 
-  const shown = new Set(sections.map((section) => section.sectionNr));
-  const citations = [...new Set(reply.citations.map(toSectionNr))].filter((sectionNr) => shown.has(sectionNr));
+  const shown = new Set(sections.map(sectionRef));
+  const citations = [...new Set(reply.citations.map(normalizeCitation))].filter(
+    (citation): citation is string => citation !== null && shown.has(citation),
+  );
 
   if (reply.answerable && citations.length === 0) {
     return null;
@@ -53,9 +56,4 @@ function isReply(reply: unknown): reply is Reply {
     Array.isArray(candidate.citations) &&
     candidate.citations.every((citation) => typeof citation === 'string')
   );
-}
-
-// "§ 97" and "97" both mean section 97.
-function toSectionNr(citation: string): string {
-  return citation.replace(/^§\s*/, '').trim();
 }

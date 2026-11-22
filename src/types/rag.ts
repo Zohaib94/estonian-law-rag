@@ -2,7 +2,8 @@ import type { RetrievedSection } from './retrieval.ts';
 
 export type GenerateJson = (prompt: string, schema: object) => Promise<unknown>;
 
-// A written answer. citations are section numbers, each one of the sections the model was given.
+// A written answer. citations are section references such as "TLS § 97", each one of the sections the model
+// was given.
 export interface Answer {
   answerable: boolean;
   text: string;

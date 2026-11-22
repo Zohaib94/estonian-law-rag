@@ -6,5 +6,8 @@ import type { SectionText } from '../types/repository.ts';
 export function toPassage(section: SectionText): string {
   const actName = ACTS[section.actCode]?.name ?? section.actCode;
 
-  return `${actName} § ${section.sectionNr}. ${section.title}\n${section.text}`;
+  // Some sections, such as those of the Constitution, have no title.
+  const title = section.title === '' ? '' : ` ${section.title}`;
+
+  return `${actName} § ${section.sectionNr}.${title}\n${section.text}`;
 }
