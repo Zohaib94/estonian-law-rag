@@ -10,15 +10,15 @@ import type { TestDatabase } from '../../helpers/database.ts';
 const ACT: Act = { code: 'TLS', name: 'Employment Contracts Act', sourceUrl: '', pageUrl: '' };
 
 // Heading and text markup as in Riigi Teataja's pages.
-function section(nr: string, title: string, text: string): string {
+function sectionHtml(nr: string, title: string, text: string): string {
   return `<div data-type="paragrahv"><strong>§ ${nr}.  </strong><strong>${title}</strong></div><div data-type="loige">${text}</div>`;
 }
 
 const VERSION_1 =
-  section('1', 'Definition of employment contract', '(1) First version.') +
-  section('2', 'Mandatory nature of provisions', '(1) Removed in version 2.');
+  sectionHtml('1', 'Definition of employment contract', '(1) First version.') +
+  sectionHtml('2', 'Mandatory nature of provisions', '(1) Removed in version 2.');
 
-const VERSION_2 = section('1', 'Definition of employment contract', '(1) Second version.');
+const VERSION_2 = sectionHtml('1', 'Definition of employment contract', '(1) Second version.');
 
 describe('importAct', () => {
   let database: TestDatabase;
