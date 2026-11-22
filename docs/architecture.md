@@ -47,8 +47,12 @@ flowchart LR
   The HTML writes the first as `10<sup>1</sup>`, so the parser turns `<sup>` digits into superscript characters
   before removing tags. The import refuses an act with a repeated § number, which is what a parsing mistake here
   would produce.
-- **Noise removed.** Amendment notes (`[RT I, 30.04.2022, 1 – entry into force …]`), chapter headings, repealed
-  subsections and repealed or omitted sections are dropped. They match many keyword searches but answer nothing.
+- **Noise removed.** The parser reads Riigi Teataja's markup, not just its text. Hover-menu buttons ("history",
+  "link"), the table of amending acts, chapter and subchapter headings, amendment notes
+  (`[RT I, 30.04.2022, 1 – entry into force …]`, which wrap over lines), footnotes, repealed subsections and
+  repealed or omitted sections are dropped. They match many keyword searches but answer nothing. The parser was
+  first written from a description of the page and was wrong in all of these ways; `tests/fixtures/` now holds
+  real excerpts that the parser tests run against.
 - **A local multilingual embedding model.** `multilingual-e5-small` runs in Node with no API key, and a question
   asked in Estonian still finds the English text. e5 models expect `query: ` and `passage: ` prefixes.
 

@@ -1,37 +1,48 @@
 import {
   AMENDMENT_NOTE,
+  AMENDMENT_TABLE,
   ANY_TAG,
   BLOCK_TAG,
-  CAPITALS_LINE,
+  FOOTNOTE,
+  HEADING_MARK,
+  HOVER_MENU,
   HTML_ENTITY,
   NAMED_ENTITIES,
+  REMOVED_NOTE,
   REPEALED_SUBSECTION,
   SCRIPT_OR_STYLE,
-  SECTION_HEADING,
-  STRUCTURE_HEADING,
+  SECTION_HEADING_TAG,
+  STRUCTURE_BLOCK,
   SUPERSCRIPT_DIGITS,
   SUPERSCRIPT_TAG,
 } from '../constants/patterns.ts';
 import type { LawSection } from '../types/law.ts';
 
-// Splits an act's HTML into one record per §. Text before § 1 (title, amendment table) is dropped, and
-// sections that are repealed or omitted from the translation are skipped.
+// Splits an act's HTML into one record per §. Text before § 1 (title, amendment table, preamble) is dropped, and
+// sections that are repealed or omitted from the translation are skipped (their heading is either "[Repealed
+// – RT ...]" or followed by a "[Repealed ...]" line). A section without a title, as in the
+// Constitution, gets an empty one.
 export function parseAct(html: string, actCode: string): LawSection[] {
   const sections: LawSection[] = [];
   // null outside a section worth keeping: before § 1, or inside a repealed or omitted §.
   let current: LawSection | null = null;
 
   for (const line of toLines(html)) {
-    const heading = line.match(SECTION_HEADING);
+    if (line.startsWith(HEADING_MARK)) {
+      const [sectionNr, title] = line.slice(HEADING_MARK.length).split(HEADING_MARK);
 
-    if (heading) {
-      const [, sectionNr, title] = heading;
-
-      current = isRemoved(title) ? null : { actCode, sectionNr, position: sections.length, title, text: '' };
+      current = title.startsWith('[') ? null : { actCode, sectionNr, position: sections.length, title, text: '' };
 
       if (current) {
         sections.push(current);
       }
+    } else if (current && REMOVED_NOTE.test(line)) {
+      // Also ends the section before a "§ 140. – § 189. [Omitted from this text.]" range.
+      if (current.text === '') {
+        sections.pop();
+      }
+
+      current = null;
     } else if (current && isBodyLine(line)) {
       current.text = current.text === '' ? line : `${current.text}\n${line}`;
     }
@@ -43,23 +54,26 @@ export function parseAct(html: string, actCode: string): LawSection[] {
 function toLines(html: string): string[] {
   const text = html
     .replace(SCRIPT_OR_STYLE, '')
+    .replace(AMENDMENT_TABLE, '')
+    .replace(HOVER_MENU, '')
+    .replace(STRUCTURE_BLOCK, '')
     .replace(SUPERSCRIPT_TAG, (_, digits: string) => toSuperscript(digits))
+    .replace(
+      SECTION_HEADING_TAG,
+      (_, sectionNr: string, title = '') => `\n${HEADING_MARK}${sectionNr}${HEADING_MARK}${title}\n`,
+    )
     .replace(BLOCK_TAG, '\n')
     .replace(ANY_TAG, '');
 
   return decodeEntities(text)
+    .replace(AMENDMENT_NOTE, '')
     .split('\n')
-    .map((line) => line.replace(AMENDMENT_NOTE, '').replace(/\s+/g, ' ').trim())
+    .map((line) => line.replace(/\s+/g, ' ').trim())
     .filter((line) => line !== '');
 }
 
-// "[Repealed – RT I ...]" or "[Omitted from this text.]"
-function isRemoved(title: string): boolean {
-  return title.startsWith('[');
-}
-
 function isBodyLine(line: string): boolean {
-  return !STRUCTURE_HEADING.test(line) && !CAPITALS_LINE.test(line) && !REPEALED_SUBSECTION.test(line);
+  return !REPEALED_SUBSECTION.test(line) && !FOOTNOTE.test(line);
 }
 
 function toSuperscript(digits: string): string {
