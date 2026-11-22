@@ -1,24 +1,48 @@
 import { readFile } from 'node:fs/promises';
 
-import { EMPLOYMENT_CONTRACTS_ACT } from '../constants/acts.ts';
+import { ACTS } from '../constants/acts.ts';
 import { migrate } from '../db/migrate.ts';
 import { initOrm } from '../db/orm.ts';
 import { importAct } from '../services/act-import.ts';
+import type { Act } from '../types/law.ts';
 
-const act = EMPLOYMENT_CONTRACTS_ACT;
+// Usage: import-act.ts [act code | all] [saved copy of the page]
+// No arguments imports every act. The saved copy is for importing one act without network access.
+const [codeArg = 'all', savedCopy] = process.argv.slice(2);
+const acts = pickActs(codeArg);
 
-// Optional argument: a saved copy of the page, to import without network access.
-const source = process.argv[2] ?? act.sourceUrl;
+if (savedCopy && acts.length !== 1) {
+  throw new Error('A saved copy of a page can only be imported for one act: pass its code first.');
+}
 
 await migrate();
 
 const orm = await initOrm();
-const count = await importAct(orm.em.fork(), act, await readSource(source));
 
-console.log(`imported ${count} sections of the ${act.name} from ${source}`);
+for (const act of acts) {
+  const source = savedCopy ?? act.sourceUrl;
+  const count = await importAct(orm.em.fork(), act, await readSource(source));
+
+  console.log(`imported ${count} sections of the ${act.name} (${act.code}) from ${source}`);
+}
+
 console.log('next: npm run embed');
 
 await orm.close();
+
+function pickActs(code: string): Act[] {
+  if (code.toLowerCase() === 'all') {
+    return Object.values(ACTS);
+  }
+
+  const act = ACTS[code.toUpperCase()];
+
+  if (!act) {
+    throw new Error(`Unknown act "${code}". Known acts: ${Object.keys(ACTS).join(', ')}, or all.`);
+  }
+
+  return [act];
+}
 
 async function readSource(location: string): Promise<string> {
   if (!location.startsWith('http')) {

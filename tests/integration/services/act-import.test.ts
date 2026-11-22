@@ -54,6 +54,24 @@ describe('importAct', () => {
     assert.deepEqual(stored.map((section) => section.text), ['(1) Second version.']);
   });
 
+  it('keeps the same section number in two acts apart, and re-importing one act leaves the other', async () => {
+    const other: Act = { code: 'PS', name: 'Constitution', sourceUrl: '', pageUrl: '' };
+
+    await importAct(database.orm.em.fork(), ACT, VERSION_1);
+    await importAct(database.orm.em.fork(), other, sectionHtml('1', '', 'Estonia is a republic.'));
+    await importAct(database.orm.em.fork(), ACT, VERSION_2);
+
+    const stored = await findSectionsWithoutEmbedding(database.orm.em.fork(), 10);
+
+    assert.deepEqual(
+      stored.map((section) => [section.actCode, section.sectionNr, section.title]),
+      [
+        ['PS', '1', ''],
+        ['TLS', '1', 'Definition of employment contract'],
+      ],
+    );
+  });
+
   it('refuses a page with no sections or a repeated section number', async () => {
     await assert.rejects(importAct(database.orm.em.fork(), ACT, '<p>Not found</p>'), /No § sections/);
     await assert.rejects(importAct(database.orm.em.fork(), ACT, VERSION_1 + VERSION_2), /appears twice/);
